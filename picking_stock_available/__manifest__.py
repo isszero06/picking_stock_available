@@ -21,7 +21,7 @@
     ],
     'license': 'OPL-1',
     'live_test_url': 'https://youtu.be/RCq8pTnsgMw',
-    'images': ['static/description/main_screenshot.png'],
+    'images': ['static/description/picking_stock_available.png'],
     'installable': True,
     'auto_install': False,
     'application': False,
