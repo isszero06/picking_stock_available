@@ -13,17 +13,28 @@ class StockMove(models.Model):
         readonly=True,
     )
 
-    @api.depends("product_id", "state")
+    @api.depends("product_id", "state", "picking_type_id","location_id","location_dest_id")
     def _compute_available_qty(self):
         for record in self:
-            if record.product_id and record.state != "done":
-                actual_qty = record.product_id.with_context(
-                    {"location": record.location_id.id}
-                ).qty_available
-                outgoing_qty = record.product_id.with_context(
-                    {"location": record.location_id.id}
-                ).outgoing_qty
-                record.qty_not_reserved = actual_qty - outgoing_qty
+            if record.picking_type_id.code in ('internal','outgoing'):
+                if record.product_id and record.state != "done":
+                    actual_qty = record.product_id.with_context(
+                        {"location": record.location_id.id}
+                    ).qty_available
+                    outgoing_qty = record.product_id.with_context(
+                        {"location": record.location_id.id}
+                    ).outgoing_qty
+                    record.qty_not_reserved = actual_qty - outgoing_qty
+            else:
+                if record.product_id and record.state != "done":
+                    actual_qty = record.product_id.with_context(
+                        {"location": record.location_dest_id.id}
+                    ).qty_available
+                    outgoing_qty = record.product_id.with_context(
+                        {"location": record.location_dest_id.id}
+                    ).outgoing_qty
+                    record.qty_not_reserved = actual_qty - outgoing_qty
+
 
 class StockMoveLine(models.Model):
 
@@ -37,15 +48,27 @@ class StockMoveLine(models.Model):
         readonly=True,
     )
 
-    @api.depends("product_id","lot_id")
+    @api.depends("product_id","lot_id", "picking_type_id","location_id","location_dest_id")
     def _compute_available_qty(self):
         for record in self:
-            if record.product_id and record.move_id.state != "done":
-                id_lot = record.lot_id.id if record.lot_id else None
-                actual_qty = record.product_id.with_context(
-                    {"location": record.location_id.id, "lot_id": id_lot}
-                ).qty_available
-                outgoing_qty = record.product_id.with_context(
-                    {"location": record.location_id.id, "lot_id": id_lot}
-                ).outgoing_qty
-                record.qty_not_reserved = actual_qty - outgoing_qty
+            if record.picking_type_id.code in ('internal','outgoing'):
+                if record.product_id and record.move_id.state != "done":
+                    id_lot = record.lot_id.id if record.lot_id else None
+                    actual_qty = record.product_id.with_context(
+                        {"location": record.location_id.id, "lot_id": id_lot}
+                    ).qty_available
+                    outgoing_qty = record.product_id.with_context(
+                        {"location": record.location_id.id, "lot_id": id_lot}
+                    ).outgoing_qty
+                    record.qty_not_reserved = actual_qty - outgoing_qty
+            else:
+
+                if record.product_id and record.move_id.state != "done":
+                    id_lot = record.lot_id.id if record.lot_id else None
+                    actual_qty = record.product_id.with_context(
+                        {"location": record.location_dest_id.id, "lot_id": id_lot}
+                    ).qty_available
+                    outgoing_qty = record.product_id.with_context(
+                        {"location": record.location_dest_id.id, "lot_id": id_lot}
+                    ).outgoing_qty
+                    record.qty_not_reserved = actual_qty - outgoing_qty
