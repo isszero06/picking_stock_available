@@ -20,7 +20,7 @@
         'views/view.xml',
     ],
     'license': 'OPL-1',
-    'live_test_url': 'https://youtu.be/RCq8pTnsgMw',
+    'live_test_url': 'https://youtu.be/sKpVr-vUcoA',
     'images': ['static/description/picking_stock_available.png'],
     'installable': True,
     'auto_install': False,
