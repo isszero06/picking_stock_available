@@ -11,7 +11,7 @@
 
 {
     'name': 'Available Qty during Picking',
-    'version': '6.0.1',
+    'version': '7.0.1',
     'category': 'Warehouse',
     "author": 'Zero Systems',
     "company": 'Zero for Information Systems',
